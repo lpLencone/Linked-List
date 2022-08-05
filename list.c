@@ -1,12 +1,13 @@
 #include <stdlib.h>
 #include "node.c"
 
-struct List
+typedef struct
 {
     struct Node *start;
     struct Node *end;
     int length;
-};
+}
+LIST;
 
 /** Initializes a linked list
  * -------------------------
@@ -17,11 +18,11 @@ struct List
  * - Allocates memory to a new linked list, and set its start and end to NULL
  * 
  * Return:
- * - struct List *: A pointer to the initialized list
+ * - LIST *: A pointer to the initialized list
  * */
-struct List *createList(void)
+LIST *createList(void)
 {
-    struct List *list = (struct List *)malloc(sizeof(struct List));
+    LIST *list = (LIST *)malloc(sizeof(LIST));
     list->start = NULL;
     list->end = NULL;
     list->length = 0;
@@ -32,7 +33,7 @@ struct List *createList(void)
 /** Append node to the end of the List
  * -----------------------
  * Arguments:
- * - list: struct List*: list to append the node to
+ * - list: LIST*: list to append the node to
  * - node: struct Node*: node to append to the list
  * 
  * Procedure:
@@ -40,7 +41,7 @@ struct List *createList(void)
  * 
  * Return: void
  * */
-void appendNode(struct List *list, struct Node *node)
+void appendNode(LIST *list, struct Node *node)
 {
     if (list->start == NULL)
     {
@@ -62,7 +63,7 @@ void appendNode(struct List *list, struct Node *node)
 
 /** Add node to the beginning of the List
  * Arguments:
- * - list: struct List*: list to queue the node in
+ * - list: LIST*: list to queue the node in
  * - node: struct Node*: node to queue in the list
  * 
  * Procedure:
@@ -73,7 +74,7 @@ void appendNode(struct List *list, struct Node *node)
  * Return:
  * - void
  * */
-void queueNode(struct List *list, struct Node *node)
+void queueNode(LIST *list, struct Node *node)
 {
     if (list->start == NULL)
     {
@@ -94,7 +95,7 @@ void queueNode(struct List *list, struct Node *node)
 
 /** Locate I'th element of the list
  * Arguments:
- * - list: struct List *: list to search the element about
+ * - list: LIST *: list to search the element about
  * - I: int: the position of the element to search about (0 -> length - 1)
  * 
  * Procedure:
@@ -103,7 +104,7 @@ void queueNode(struct List *list, struct Node *node)
  * Return:
  * struct Node *: Node at the I'th element
  * */
-struct Node *locateNode(struct List *list, int at)
+struct Node *locateNode(LIST *list, int at)
 {
     int len = list->length;
     if (at >= len) return NULL;
@@ -119,7 +120,7 @@ struct Node *locateNode(struct List *list, int at)
 
 /** Create a copy of a List
  * Argument:
- * - list: struct List*: list from which the copy will be originated
+ * - list: LIST*: list from which the copy will be originated
  * 
  * Procedure:
  * - Iterate through the list,
@@ -127,11 +128,11 @@ struct Node *locateNode(struct List *list, int at)
  * - Append the nodes to the copying list
  * 
  * Return:
- * - struct List *: A pointer to the copied list
+ * - LIST *: A pointer to the copied list
  * */
-struct List *copyList(struct List *list)
+LIST *copyList(LIST *list)
 {
-    struct List *listCopy = (struct List *)malloc(sizeof(struct List));
+    LIST *listCopy = (LIST *)malloc(sizeof(LIST));
     if (list->length == 0) return listCopy;
 
     struct Node *copyNode, *nptr = list->start;
@@ -149,7 +150,7 @@ struct List *copyList(struct List *list)
 /** Free the memory from all the nodes in the list
  * ----------------------------------------------
  * Arguments:
- * - head: struct List*: the list to free memory from
+ * - head: LIST*: the list to free memory from
  * 
  * Procedure:
  * - Deletes each node of the list, one after another, till the end of the list.
@@ -157,7 +158,7 @@ struct List *copyList(struct List *list)
  * Return:
  * - void 
  * */
-void freeList(struct List *list)
+void freeList(LIST *list)
 {
     struct Node *tmp, *ptr = list->start;
     
@@ -175,7 +176,7 @@ void freeList(struct List *list)
 /** Print linked list
  * -----------------
  * Arguments:
- * - list: struct List*
+ * - list: LIST*
  * 
  * Procedure:
  * - Iterate through the list and print the nodes' ids
@@ -183,7 +184,7 @@ void freeList(struct List *list)
  * Return:
  * - void
  * */
-void printList(struct List *list)
+void printList(LIST *list)
 {
     struct Node *nptr = list->start;
     while (nptr != NULL)
@@ -208,9 +209,9 @@ void printList(struct List *list)
  * Return:
  * - void: merge happens inplace
  * */
-void mergeList(struct List *list, int spos, int llen, int mpos, int rlen)
+void mergeList(LIST *list, int spos, int llen, int mpos, int rlen)
 {
-    struct List *mergedList = createList();
+    LIST *mergedList = createList();
     struct Node *lNode = locateNode(list, spos);
     struct Node *rNode = locateNode(list, mpos);
     struct Node *nIterator = lNode;
@@ -260,7 +261,7 @@ void mergeList(struct List *list, int spos, int llen, int mpos, int rlen)
 
 /** Merge sort the List
  * Arguments:
- * - list: struct List*: list to be sorted
+ * - list: LIST*: list to be sorted
  * - startPos: int: from where to start sorting
  * - length: int: the length to sort from the start position
  * 
@@ -272,7 +273,7 @@ void mergeList(struct List *list, int spos, int llen, int mpos, int rlen)
  * Return:
  * - void; the sorting happens inplace
  * */
-void mergeSortList(struct List *list, int startPos, int length)
+void mergeSortList(LIST *list, int startPos, int length)
 {
     if (length == 1) return;
 

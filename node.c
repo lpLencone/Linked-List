@@ -1,11 +1,12 @@
 #include <stdlib.h>
 
-struct Node
+typedef struct Node
 {
     struct Node *prev;
     struct Node *next;
     char *id;
-};
+}
+NODE;
 
 /** Create node with provided id
  * ---------------------------------

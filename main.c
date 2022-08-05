@@ -9,10 +9,10 @@
 int main(void)
 {
     srand(time(0));
-    struct List *list = createList();
+    LIST *list = createList();
 
     char id[15];
-    struct Node *tmp;
+    NODE *tmp;
     for (int i = 0; i < 100; i++)
     {
         randomString(id, 5);
@@ -21,7 +21,7 @@ int main(void)
     }
     printList(list);
 
-    struct List *sortedList = copyList(list);
+    LIST *sortedList = copyList(list);
     mergeSortList(sortedList, 0, sortedList->length);
     
     printf("\n\nSORTED:\n\n");
