@@ -3,8 +3,8 @@
 
 typedef struct
 {
-    struct Node *start;
-    struct Node *end;
+    NODE *start;
+    NODE *end;
     int length;
 }
 LIST;
@@ -34,14 +34,14 @@ LIST *createList(void)
  * -----------------------
  * Arguments:
  * - list: LIST*: list to append the node to
- * - node: struct Node*: node to append to the list
+ * - node: NODE*: node to append to the list
  * 
  * Procedure:
  * - Append the node to the end of the list
  * 
  * Return: void
  * */
-void appendNode(LIST *list, struct Node *node)
+void appendNode(LIST *list, NODE *node)
 {
     if (list->start == NULL)
     {
@@ -64,7 +64,7 @@ void appendNode(LIST *list, struct Node *node)
 /** Add node to the beginning of the List
  * Arguments:
  * - list: LIST*: list to queue the node in
- * - node: struct Node*: node to queue in the list
+ * - node: NODE*: node to queue in the list
  * 
  * Procedure:
  * - Link the node's next to the first element of the list,
@@ -74,7 +74,7 @@ void appendNode(LIST *list, struct Node *node)
  * Return:
  * - void
  * */
-void queueNode(LIST *list, struct Node *node)
+void queueNode(LIST *list, NODE *node)
 {
     if (list->start == NULL)
     {
@@ -93,6 +93,53 @@ void queueNode(LIST *list, struct Node *node)
     list->length += 1;   
 }
 
+/** Add node to list maintaining its sorted status
+ * Arguments:
+ * - list: LIST*: list to add node to
+ * - node: NODE*: node to add to the list
+ * 
+ * Procedure:
+ * - Use a temporary NODE* variable to compare the node's id with the list's node's ids
+ * - When node's id is finally greater ASCII-betically than current tmp's id, insert it next to tmp
+ * - But if reached the end of the list, append node
+ */
+void insertSorted(LIST *list, NODE *node)
+{
+    if (list->length == 0)
+    {
+        appendNode(list, node);
+        return;
+    }
+
+    NODE *tmp = list->start;
+    while (tmp != NULL && strcmp(tmp->id, node->id) < 0)
+    {
+        tmp = tmp->next;
+    }
+
+    if (tmp == NULL)
+    {
+        appendNode(list, node);
+        return;
+    }
+    
+    if (tmp == list->start)
+    {
+        tmp->prev = node;
+        node->next = tmp;
+        list->start = node;
+    }
+    else
+    {
+        node->prev = tmp->prev;
+        tmp->prev->next = node;
+        tmp->prev = node;
+        node->next = tmp;
+    }
+
+    list->length++;
+}
+
 /** Locate I'th element of the list
  * Arguments:
  * - list: LIST *: list to search the element about
@@ -102,15 +149,15 @@ void queueNode(LIST *list, struct Node *node)
  * - Iterate through the list up till the I, unless I is bigger than the list's length
  * 
  * Return:
- * struct Node *: Node at the I'th element
+ * NODE *: Node at the I'th element
  * */
-struct Node *locateNode(LIST *list, int at)
+NODE *locateNode(LIST *list, int at)
 {
     int len = list->length;
     if (at >= len) return NULL;
     if (at == len - 1) return list->end;
 
-    struct Node *nptr = list->start;
+    NODE *nptr = list->start;
     for (int i = 0; i < at; i++)
     {
         nptr = nptr->next;
@@ -132,19 +179,19 @@ struct Node *locateNode(LIST *list, int at)
  * */
 LIST *copyList(LIST *list)
 {
-    LIST *listCopy = (LIST *)malloc(sizeof(LIST));
-    if (list->length == 0) return listCopy;
+    LIST *copiedList = createList();
+    if (list->length == 0) return copiedList;
 
-    struct Node *copyNode, *nptr = list->start;
+    NODE *copiedNode, *nptr = list->start;
 
     while (nptr != NULL)
     {
-        copyNode = createNode(nptr->id);
-        appendNode(listCopy, copyNode);
+        copiedNode = createNode(nptr->id);
+        appendNode(copiedList, copiedNode);
         nptr = nptr->next;       
     }
     
-    return listCopy;
+    return copiedList;
 }
 
 /** Free the memory from all the nodes in the list
@@ -160,7 +207,7 @@ LIST *copyList(LIST *list)
  * */
 void freeList(LIST *list)
 {
-    struct Node *tmp, *ptr = list->start;
+    NODE *tmp, *ptr = list->start;
     
     while (ptr != NULL)
     {
@@ -186,7 +233,7 @@ void freeList(LIST *list)
  * */
 void printList(LIST *list)
 {
-    struct Node *nptr = list->start;
+    NODE *nptr = list->start;
     while (nptr != NULL)
     {
         printf("%s\n", nptr->id);
@@ -196,8 +243,8 @@ void printList(LIST *list)
 
 /** Merge two sorted sided of a linked list into a single sorted list
  * Arguments:
- * - lNode: struct node *: node at the start of the left side of the list
- * - rNode: struct Node*: node at the start of the right side of the list
+ * - lNode: NODE *: node at the start of the left side of the list
+ * - rNode: NODE*: node at the start of the right side of the list
  * 
  * Procedure:
  * - Iterate through the elements starting from the beginning of both the left and right side simultaneously,
@@ -212,9 +259,9 @@ void printList(LIST *list)
 void mergeList(LIST *list, int spos, int llen, int mpos, int rlen)
 {
     LIST *mergedList = createList();
-    struct Node *lNode = locateNode(list, spos);
-    struct Node *rNode = locateNode(list, mpos);
-    struct Node *nIterator = lNode;
+    NODE *lNode = locateNode(list, spos);
+    NODE *rNode = locateNode(list, mpos);
+    NODE *nIterator = lNode;
 
     int li = 0, ri = 0;
     while (li < llen && ri < rlen)
@@ -246,7 +293,7 @@ void mergeList(LIST *list, int spos, int llen, int mpos, int rlen)
         ri++;
     }
 
-    struct Node *mgdNode = mergedList->start;
+    NODE *mgdNode = mergedList->start;
 
     int len = llen + rlen;
     for (int i = 0; i < len; i++)

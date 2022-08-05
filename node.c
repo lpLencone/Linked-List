@@ -22,9 +22,9 @@ NODE;
  * Return:
  * - struct Node *: A pointer to the created node.
  * */
-struct Node *createNode(char *id)
+NODE *createNode(char *id)
 {
-    struct Node *n = (struct Node *)malloc(sizeof(struct Node));
+    NODE *n = (NODE *)malloc(sizeof(NODE));
     n->prev = NULL;
     n->next = NULL;
 

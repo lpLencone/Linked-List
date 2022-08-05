@@ -13,7 +13,7 @@ int main(void)
 
     char id[15];
     NODE *tmp;
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 3; i++)
     {
         randomString(id, 5);
         tmp = createNode(id);
@@ -27,6 +27,18 @@ int main(void)
     printf("\n\nSORTED:\n\n");
 
     printList(sortedList);
+
+    printf("\n\nINSERTED:\n\n");
+
+
+    for (int i = 0; i < 3; i++)
+    {
+        randomString(id, 5);
+        tmp = createNode(id);
+        insertSorted(sortedList, tmp);
+    }
+    printList(sortedList);
+
 
     freeList(list);
     freeList(sortedList);
