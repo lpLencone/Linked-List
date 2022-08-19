@@ -13,9 +13,9 @@ int main(void)
 
     char id[15];
     NODE *tmp;
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 10; i++)
     {
-        randomString(id, 5);
+        randomString(id, 1);
         tmp = createNode(id);
         queueNode(list, tmp);
     }
@@ -31,14 +31,22 @@ int main(void)
     printf("\n\nINSERTED:\n\n");
 
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 10; i++)
     {
-        randomString(id, 5);
+        randomString(id, 1);
         tmp = createNode(id);
         insertSorted(sortedList, tmp);
     }
     printList(sortedList);
 
+
+    randomString(id, 1);
+    deleteNodeById(sortedList, id);
+    deleteNodeAt(sortedList, 1);
+    deleteNodeAt(sortedList, 2);
+
+    printf("\n\nDELETED:\n\n");
+    printList(sortedList);
 
     freeList(list);
     freeList(sortedList);

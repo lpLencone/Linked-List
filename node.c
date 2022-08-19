@@ -35,3 +35,27 @@ NODE *createNode(char *id)
     return n;
 }
 
+/** Deletes a node regardless of the list it's in
+ * Arguments:
+ * - node: NODE*: node to be deleted from the list
+ * 
+ * Procedure:
+ * - link the node's previous and next node pointers, if they exist, then free the memory of its id and itself
+ * */
+void deleteNode(NODE *node)
+{
+    // Connect previous node to the next node
+    if (node->prev != NULL)
+    {
+        node->prev->next = node->next;
+    }
+
+    // Connect next node to the previous one
+    if (node->next != NULL)
+    {
+        node->next->prev = node->prev;
+    }
+
+    free(node->id);
+    free(node);
+}

@@ -51,7 +51,7 @@ void appendNode(LIST *list, NODE *node)
     }
     else
     {
-        // link the node and the last node of the list
+        // link the new node and the last node of the list
         node->prev = list->end;
         list->end->next = node;
         // update the pointer to the end of the list
@@ -78,7 +78,7 @@ void queueNode(LIST *list, NODE *node)
 {
     if (list->start == NULL)
     {
-        // set both start and end of list to Node node
+        // set both start and end of list to new node
         list->start = node;
         list->end = node;
     }
@@ -90,7 +90,7 @@ void queueNode(LIST *list, NODE *node)
         // update the pointer to the end of the list
         list->start = node;
     }
-    list->length += 1;   
+    list->length++;   
 }
 
 /** Add node to list maintaining its sorted status
@@ -100,7 +100,7 @@ void queueNode(LIST *list, NODE *node)
  * 
  * Procedure:
  * - Use a temporary NODE* variable to compare the node's id with the list's node's ids
- * - When node's id is finally greater ASCII-betically than current tmp's id, insert it next to tmp
+ * - When node's id comes ASCII-betically before the current tmp's id, insert the new node before tmp
  * - But if reached the end of the list, append node
  */
 void insertSorted(LIST *list, NODE *node)
@@ -119,15 +119,15 @@ void insertSorted(LIST *list, NODE *node)
 
     if (tmp == NULL)
     {
+        // node's id comes ASCIIbetically after all the other nodes in the list
         appendNode(list, node);
         return;
     }
     
     if (tmp == list->start)
     {
-        tmp->prev = node;
-        node->next = tmp;
-        list->start = node;
+        // node's id comes ASCIIbetically before all the other nodes in the list
+        queueNode(list, node);
     }
     else
     {
@@ -151,7 +151,7 @@ void insertSorted(LIST *list, NODE *node)
  * Return:
  * NODE *: Node at the I'th element
  * */
-NODE *locateNode(LIST *list, int at)
+NODE *locateNodeAt(LIST *list, int at)
 {
     int len = list->length;
     if (at >= len) return NULL;
@@ -163,6 +163,79 @@ NODE *locateNode(LIST *list, int at)
         nptr = nptr->next;
     }
     return nptr;
+}
+
+/** Locates a node in a list given an id
+ * Arguments:
+ * - list: LIST*: list to locate the node in
+ * - id: char*: id of the sought after node
+ * 
+ * Procedure:
+ * - iterates through the list using a temporary NODE* variable
+ * - returns the node if it's found, returns NULL otherwise
+ * */
+NODE *locateNodeById(LIST *list, char *id)
+{
+    if (list->length == 0)
+    {
+        // SIGERR
+        return NULL;
+    }
+
+    NODE *tmp = list->start;
+    while (tmp != NULL && strcmp(tmp->id, id) != 0)
+    {
+        tmp = tmp->next;
+    }
+
+    // Will return NULL if no node with such id exists
+    return tmp;
+}
+
+/** Delete I'th element of the list, and free the memory associated with it
+ * Arguments:
+ * - list: LIST*: list to delete the item from
+ * - at: int: position of the node
+ * 
+ * Procedure:
+ * - Uses the locateNodeAt function to find the node, then connect the other nodes it's linked to
+ * and finally frees its memory.
+ * */
+void deleteNodeAt(LIST *list, int at)
+{
+    NODE *popNode = locateNodeAt(list, at);
+
+    if (popNode == NULL)
+    {
+        // SIGERR
+        return;
+    }
+
+    deleteNode(popNode);
+    list->length--;
+}
+
+/** Deletes a node from a list, given it's id
+ * Arguments:
+ * - list: LIST*: list to delete the node from
+ * - id: char*: id of target node
+ * 
+ * Procedure:
+ * - uses the locateNodeById function to locate the node
+ * - uses the deleteNode function to delete the node correctly
+ * */
+void deleteNodeById(LIST *list, char *id)
+{
+    NODE *nptr = locateNodeById(list, id);
+
+    if (nptr == NULL)
+    {
+        // SIGERR
+        return;
+    }
+
+    deleteNode(nptr);
+    list->length--;
 }
 
 /** Create a copy of a List
@@ -182,13 +255,13 @@ LIST *copyList(LIST *list)
     LIST *copiedList = createList();
     if (list->length == 0) return copiedList;
 
-    NODE *copiedNode, *nptr = list->start;
+    NODE *copiedNode, *tmp = list->start;
 
-    while (nptr != NULL)
+    while (tmp != NULL)
     {
-        copiedNode = createNode(nptr->id);
+        copiedNode = createNode(tmp->id);
         appendNode(copiedList, copiedNode);
-        nptr = nptr->next;       
+        tmp = tmp->next;       
     }
     
     return copiedList;
@@ -233,11 +306,14 @@ void freeList(LIST *list)
  * */
 void printList(LIST *list)
 {
+    printf("List length: %i\n", list->length);
     NODE *nptr = list->start;
+    int i = 0;
     while (nptr != NULL)
     {
-        printf("%s\n", nptr->id);
+        printf("%i | %s\n", i, nptr->id);
         nptr = nptr->next;
+        i++;
     }   
 }
 
@@ -259,8 +335,8 @@ void printList(LIST *list)
 void mergeList(LIST *list, int spos, int llen, int mpos, int rlen)
 {
     LIST *mergedList = createList();
-    NODE *lNode = locateNode(list, spos);
-    NODE *rNode = locateNode(list, mpos);
+    NODE *lNode = locateNodeAt(list, spos);
+    NODE *rNode = locateNodeAt(list, mpos);
     NODE *nIterator = lNode;
 
     int li = 0, ri = 0;
