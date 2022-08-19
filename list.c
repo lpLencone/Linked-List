@@ -63,18 +63,15 @@ void appendNode(LIST *list, NODE *node)
 
 /** Add node to the beginning of the List
  * Arguments:
- * - list: LIST*: list to queue the node in
- * - node: NODE*: node to queue in the list
+ * - list: LIST*: list to enqueue the node in
+ * - node: NODE*: node to enqueue in the list
  * 
  * Procedure:
  * - Link the node's next to the first element of the list,
  * - Link the first element's prev to the node,
  * - Update start position of the list.
- * 
- * Return:
- * - void
  * */
-void queueNode(LIST *list, NODE *node)
+void enqueueNode(LIST *list, NODE *node)
 {
     if (list->start == NULL)
     {
@@ -127,7 +124,7 @@ void insertSorted(LIST *list, NODE *node)
     if (tmp == list->start)
     {
         // node's id comes ASCIIbetically before all the other nodes in the list
-        queueNode(list, node);
+        enqueueNode(list, node);
     }
     else
     {
@@ -211,6 +208,11 @@ void deleteNodeAt(LIST *list, int at)
         return;
     }
 
+    if (popNode == list->start)
+    {
+        list->start = popNode->next;
+    }
+
     deleteNode(popNode);
     list->length--;
 }
@@ -234,8 +236,25 @@ void deleteNodeById(LIST *list, char *id)
         return;
     }
 
+    if (nptr == list->start)
+    {
+        list->start = nptr->next;
+    }
+
     deleteNode(nptr);
     list->length--;
+}
+
+/** Remove node from the beginning of the List
+ * Arguments:
+ * - list: LIST*: list to dequeue the node from
+ * 
+ * Procedure:
+ * - Use deleteNodeAt(list, 0) to delete the first element;
+ * */
+void dequeueNode(LIST *list)
+{
+    deleteNodeAt(list, 0);
 }
 
 /** Create a copy of a List
@@ -263,6 +282,7 @@ LIST *copyList(LIST *list)
         appendNode(copiedList, copiedNode);
         tmp = tmp->next;       
     }
+    copiedList->length = list->length;
     
     return copiedList;
 }

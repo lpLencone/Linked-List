@@ -17,7 +17,7 @@ int main(void)
     {
         randomString(id, 1);
         tmp = createNode(id);
-        queueNode(list, tmp);
+        enqueueNode(list, tmp);
     }
     printList(list);
 
@@ -46,6 +46,12 @@ int main(void)
     deleteNodeAt(sortedList, 2);
 
     printf("\n\nDELETED:\n\n");
+    printList(sortedList);
+
+    dequeueNode(sortedList);
+    dequeueNode(sortedList);
+    dequeueNode(sortedList);
+    printf("\n\nDEQUEUED:\n\n");
     printList(sortedList);
 
     freeList(list);
